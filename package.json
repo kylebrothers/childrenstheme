@@ -1,0 +1,30 @@
+{
+  "name": "your-bootstrap-design-system",
+  "version": "1.0.0",
+  "description": "Lightweight Bootstrap customization using only SCSS variables and mixins",
+  "main": "_variables.scss",
+  "keywords": [
+    "bootstrap",
+    "scss",
+    "css",
+    "design-system",
+    "theme"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "peerDependencies": {
+    "bootstrap": "^5.3.0"
+  },
+  "devDependencies": {
+    "sass": "^1.60.0"
+  },
+  "files": [
+    "_variables.scss",
+    "_mixins.scss",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/your-bootstrap-design-system.git"
+  }
+}
