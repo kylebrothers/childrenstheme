@@ -1,0 +1,108 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'example.html'
+      - 'dist/**'
+      - '.github/workflows/deploy-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Prepare pages content
+      run: |
+        # Create pages directory
+        mkdir -p pages
+        
+        # Copy dist files (CSS, etc.)
+        if [ -d "dist" ]; then
+          cp -r dist/* pages/
+          echo "✅ Copied dist/ contents to pages/"
+        else
+          echo "⚠️ No dist/ directory found"
+          mkdir -p pages
+        fi
+        
+        # Copy example.html if it exists
+        if [ -f "example.html" ]; then
+          cp example.html pages/
+          echo "✅ Copied example.html to pages/"
+        else
+          echo "⚠️ No example.html found"
+        fi
+        
+        # Create index.html that redirects to example.html (if it exists)
+        if [ -f "pages/example.html" ]; then
+          cat > pages/index.html << 'EOF'
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta http-equiv="refresh" content="0; url=./example.html">
+            <title>Redirecting...</title>
+        </head>
+        <body>
+            <p>Redirecting to <a href="./example.html">example page</a>...</p>
+        </body>
+        </html>
+        EOF
+          echo "✅ Created index.html redirect"
+        fi
+        
+        # Create README for pages
+        cat > pages/README.md << 'EOF'
+        # Custom Bootstrap Theme Files
+        
+        ## Available Files
+        - `theme.css` - Compressed production version
+        - `theme-dev.css` - Expanded development version with source map
+        - `example.html` - Live demo page
+        
+        ## CDN Usage
+        ```html
+        <!-- Production -->
+        <link href="https://cdn.jsdelivr.net/gh/kylebrothers/childrenstheme@main/dist/theme.css" rel="stylesheet">
+        
+        <!-- Development -->
+        <link href="https://cdn.jsdelivr.net/gh/kylebrothers/childrenstheme@main/dist/theme-dev.css" rel="stylesheet">
+        ```
+        
+        ## Live Demo
+        [View Example Page](./example.html)
+        EOF
+        
+        # Show what we're deploying
+        echo "📁 Pages content:"
+        ls -la pages/
+        
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+      
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: './pages'
+        
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
