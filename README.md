@@ -20,15 +20,29 @@ A lightweight Bootstrap customization approach using only SCSS variables and mix
 | Danger Red | `#EB1946` | Error states, destructive actions |
 | Orange | `#F7971E` | Accent color, highlights |
 
-## Usage in Your Projects
+## Usage Options
 
-### 1. Setup
-Each project needs Bootstrap installed:
+### Option 1: Direct CSS Import (HTML Pages)
+Use the auto-compiled CSS files for simple HTML pages:
+
+```html
+<!-- Production version (compressed) -->
+<link href="https://cdn.jsdelivr.net/gh/yourusername/your-repo@main/dist/theme.css" rel="stylesheet">
+
+<!-- OR GitHub Pages -->
+<link href="https://yourusername.github.io/your-repo/theme.css" rel="stylesheet">
+
+<!-- Development version (expanded with source maps) -->
+<link href="https://cdn.jsdelivr.net/gh/yourusername/your-repo@main/dist/theme-dev.css" rel="stylesheet">
+```
+
+### Option 2: SCSS Import (Build Process Projects)
+For projects with SCSS compilation:
+
 ```bash
 npm install bootstrap
 ```
 
-### 2. Import Order in Your SCSS
 ```scss
 // Your main.scss in each project
 @import 'path/to/design-system/variables';
@@ -41,21 +55,32 @@ npm install bootstrap
 }
 ```
 
-### 3. Git Submodule (Recommended)
-Add this repo as a submodule to each project:
-```bash
-git submodule add https://github.com/yourusername/design-system.git src/scss/design-system
+## Auto-Compilation with GitHub Actions
+
+This repository automatically compiles SCSS to CSS on every push using GitHub Actions:
+
+- **Compressed version**: `dist/theme.css` - For production use
+- **Development version**: `dist/theme-dev.css` - Expanded with source maps
+- **Auto-deployment**: Files are available via GitHub Pages and jsDelivr CDN
+
+The GitHub Action:
+1. Installs Bootstrap and Sass
+2. Compiles your variables + mixins + Bootstrap into CSS
+3. Creates both compressed and expanded versions
+4. Deploys to GitHub Pages
+5. Commits compiled files back to the repo
+
+### CDN Options
+
+**jsDelivr CDN** (Recommended - faster, global CDN):
+```html
+<link href="https://cdn.jsdelivr.net/gh/yourusername/repo@main/dist/theme.css" rel="stylesheet">
 ```
 
-Then in your SCSS:
-```scss
-@import 'design-system/variables';
-@import 'design-system/mixins';
-@import '~bootstrap/scss/bootstrap';
+**GitHub Pages**:
+```html
+<link href="https://yourusername.github.io/repo/theme.css" rel="stylesheet">
 ```
-
-### 4. Alternative: Direct File Copy
-Copy `_variables.scss` and `_mixins.scss` to each project and import them before Bootstrap.
 
 ## File Structure
 
