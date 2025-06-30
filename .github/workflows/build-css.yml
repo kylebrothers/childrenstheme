@@ -1,0 +1,80 @@
+name: Build and Deploy CSS
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: |
+        npm install bootstrap@^5.3.0 sass
+        
+    - name: Create build directory
+      run: mkdir -p dist
+      
+    - name: Compile SCSS to CSS
+      run: |
+        # Create a temporary main.scss file that imports everything
+        cat > temp-main.scss << 'EOF'
+        @import 'variables';
+        @import 'mixins';
+        @import 'node_modules/bootstrap/scss/bootstrap';
+        EOF
+        
+        # Compile compressed version
+        npx sass temp-main.scss dist/theme.css --style=compressed --no-source-map
+        
+        # Compile expanded version with source map
+        npx sass temp-main.scss dist/theme-dev.css --style=expanded --source-map
+        
+        # Clean up
+        rm temp-main.scss
+        
+    - name: Create file list
+      run: |
+        echo "# Available Files" > dist/README.md
+        echo "" >> dist/README.md
+        echo "- \`theme.css\` - Compressed production version" >> dist/README.md
+        echo "- \`theme-dev.css\` - Expanded development version with source map" >> dist/README.md
+        echo "" >> dist/README.md
+        echo "## CDN Usage" >> dist/README.md
+        echo "" >> dist/README.md
+        echo "\`\`\`html" >> dist/README.md
+        echo "<!-- Production -->" >> dist/README.md
+        echo "<link href=\"https://cdn.jsdelivr.net/gh/${{ github.repository }}@main/dist/theme.css\" rel=\"stylesheet\">" >> dist/README.md
+        echo "" >> dist/README.md
+        echo "<!-- Development -->" >> dist/README.md
+        echo "<link href=\"https://cdn.jsdelivr.net/gh/${{ github.repository }}@main/dist/theme-dev.css\" rel=\"stylesheet\">" >> dist/README.md
+        echo "\`\`\`" >> dist/README.md
+        
+    - name: Deploy to GitHub Pages
+      if: github.ref == 'refs/heads/main'
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./dist
+        publish_branch: gh-pages
+        
+    - name: Commit compiled files to main branch
+      if: github.ref == 'refs/heads/main'
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add dist/
+        git diff --staged --quiet || git commit -m "Auto-compile CSS [skip ci]"
+        git push
