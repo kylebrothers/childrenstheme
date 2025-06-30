@@ -1,0 +1,76 @@
+// Custom Bootstrap Variables Override
+// Import this BEFORE importing Bootstrap in each project
+
+// ================================
+// Custom Color Palette
+// ================================
+$theme-colors: (
+  "primary": #006dcc,
+  "secondary": #00A6CE,
+  "success": #77BD43,
+  "info": #00A6CE,
+  "warning": #FDC800,
+  "danger": #EB1946,
+  "red": #EB1946,
+  "yellow": #FDC800,
+  "blue": #006dcc,
+  "light-blue": #00A6CE,
+  "orange": #F7971E,
+  "green": #77BD43
+);
+
+// ================================
+// Remove All Rounded Corners
+// ================================
+$border-radius: 0;
+$border-radius-sm: 0;
+$border-radius-lg: 0;
+$border-radius-xl: 0;
+$border-radius-xxl: 0;
+$border-radius-pill: 0;
+
+// Component-specific border radius overrides
+$card-border-radius: 0;
+$btn-border-radius: 0;
+$btn-border-radius-sm: 0;
+$btn-border-radius-lg: 0;
+$input-border-radius: 0;
+$input-border-radius-sm: 0;
+$input-border-radius-lg: 0;
+$dropdown-border-radius: 0;
+$modal-content-border-radius: 0;
+$alert-border-radius: 0;
+$badge-border-radius: 0;
+$pagination-border-radius: 0;
+$tooltip-border-radius: 0;
+$popover-border-radius: 0;
+$toast-border-radius: 0;
+$progress-border-radius: 0;
+$list-group-border-radius: 0;
+$nav-pills-border-radius: 0;
+
+// ================================
+// Optional: Additional Variable Overrides
+// ================================
+// Uncomment and modify these if you want additional customizations:
+
+// Typography
+// $font-family-sans-serif: "Your Font", system-ui, -apple-system, sans-serif;
+// $font-size-base: 1rem;
+// $line-height-base: 1.5;
+// $headings-font-weight: 600;
+
+// Spacing
+// $spacer: 1rem;
+
+// Buttons
+// $btn-font-weight: 600;
+// $btn-padding-y: 0.5rem;
+// $btn-padding-x: 1rem;
+
+// Links
+// $link-decoration: none;
+// $link-hover-decoration: underline;
+
+// Grid
+// $grid-gutter-width: 1.5rem;
