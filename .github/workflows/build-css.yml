@@ -1,0 +1,62 @@
+name: Build CSS Theme
+
+on:
+  push:
+    branches: [ main ]
+    paths: 
+      - '_variables.scss'
+      - '_mixins.scss'
+      - '.github/workflows/build-css.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-css:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: Install dependencies
+      run: npm install bootstrap@^5.3.0 sass
+        
+    - name: Create build directory
+      run: mkdir -p dist
+      
+    - name: Compile SCSS to CSS
+      run: |
+        # Create temporary main.scss file
+        cat > temp-main.scss << 'EOF'
+        @import 'variables';
+        @import 'mixins';
+        @import 'node_modules/bootstrap/scss/bootstrap';
+        EOF
+        
+        # Compile compressed version
+        npx sass temp-main.scss dist/theme.css --style=compressed --no-source-map
+        
+        # Compile expanded version with source map
+        npx sass temp-main.scss dist/theme-dev.css --style=expanded --source-map
+        
+        # Clean up
+        rm temp-main.scss
+        
+        echo "✅ CSS compilation complete"
+        ls -la dist/
+        
+    - name: Commit compiled CSS
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add dist/
+        git diff --staged --quiet || (git commit -m "Auto-compile CSS [skip ci]" && git push)
