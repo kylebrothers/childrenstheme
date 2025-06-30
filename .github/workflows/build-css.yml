@@ -52,10 +52,14 @@ jobs:
         
     - name: Create file list
       run: |
+        # Copy example.html to dist folder
+        cp example.html dist/ 2>/dev/null || echo "No example.html found, skipping..."
+        
         echo "# Available Files" > dist/README.md
         echo "" >> dist/README.md
         echo "- \`theme.css\` - Compressed production version" >> dist/README.md
         echo "- \`theme-dev.css\` - Expanded development version with source map" >> dist/README.md
+        echo "- \`example.html\` - Live demo page" >> dist/README.md
         echo "" >> dist/README.md
         echo "## CDN Usage" >> dist/README.md
         echo "" >> dist/README.md
@@ -66,6 +70,10 @@ jobs:
         echo "<!-- Development -->" >> dist/README.md
         echo "<link href=\"https://cdn.jsdelivr.net/gh/${{ github.repository }}@main/dist/theme-dev.css\" rel=\"stylesheet\">" >> dist/README.md
         echo "\`\`\`" >> dist/README.md
+        echo "" >> dist/README.md
+        echo "## Live Demo" >> dist/README.md
+        echo "" >> dist/README.md
+        echo "[View Example Page](./example.html)" >> dist/README.md
         
     - name: Deploy to GitHub Pages
       if: github.ref == 'refs/heads/main'
